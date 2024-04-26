@@ -107,16 +107,32 @@ class LinkedList {
 public class Map2D {
     public static void main(String[] args) {
 
-        String[] services1 = {"Food stall", "Merchandise"};
-        Place place1 = new Place(1000,100,services1);
-
-        String[] services2 = {"City hall", "Clerk desk"};
-        Place place2 = new Place(2000,21000,services2);
+        String[] serviceTypes = {"Food stall", "Paper desk", "Merchandise", "Drink shop", "Book store", "Gas station", "School", "Restaurant", "Gym", "Arcade"};
 
         LinkedList list = new LinkedList();
-        list.add(place1);
-        list.add(place2);
+
+        int serviceCount = serviceTypes.length - 1;
+        for (int i = 0; i <= 15; i++) {
+            int x = 10 * i;
+            int y = 20 * i + 5; // Adjust y to increment with i
+            
+            String[] services = {serviceTypes[i % serviceCount + 1], serviceTypes[i % serviceCount]};
+            Place place = new Place(x, y, services);
+            list.add(place);
+        }
+
         list.display();
+
+        // String[] services1 = {"Food stall", "Merchandise"};
+        // Place place1 = new Place(1000,100,services1);
+
+        // String[] services2 = {"City hall", "Clerk desk"};
+        // Place place2 = new Place(2000,21000,services2);
+
+        // LinkedList list = new LinkedList();
+        // list.add(place1);
+        // list.add(place2);
+        // list.display();
     }
 }
 
