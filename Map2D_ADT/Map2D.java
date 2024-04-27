@@ -17,7 +17,11 @@ class Place {
     public int getX() {
         return x;
     }
-    
+
+    public void setServices(String[] services) {
+        this.services = services;
+    }
+
     public int getY() {
         return y;
     }
@@ -47,7 +51,7 @@ class ListNode {
     public Place getData() {
         return data;
     }
-
+    
     public ListNode getNext() {
         return next;
     }
@@ -77,23 +81,23 @@ class LinkedList {
         }
     }
 
-    // public void remove(Place data) {
-    //     if (head == null) {
-    //         return;
-    //     }
-    //     if (head.getData().equals(data)) {
-    //         head = head.getNext();
-    //         return;
-    //     }
-    //     ListNode current = head;
-    //     while (current.getNext() != null) {
-    //         if (current.getNext().getData().equals(data)) {
-    //             current.setNext(current.getNext().getNext());
-    //             return;
-    //         }
-    //         current = current.getNext();
-    //     }
-    // }
+    public void remove(Place data) {
+        if (head == null) {
+            return;
+        }
+        if (head.getData().equals(data)) {
+            head = head.getNext();
+            return;
+        }
+        ListNode current = head;
+        while (current.getNext() != null) {
+            if (current.getNext().getData().equals(data)) {
+                current.setNext(current.getNext().getNext());
+                return;
+            }
+            current = current.getNext();
+        }
+    }
 
     public Place getByCoordinates(int x, int y) {
         ListNode current = head;
@@ -105,6 +109,33 @@ class LinkedList {
             current = current.getNext();
         }
         return null; // If the place with given coordinates is not found
+    }
+
+    public Place editThePlace(int x, int y, String[] newServices) {
+        ListNode current = head;
+        while (current != null) {
+            Place place = current.getData();
+            if (place.getX() == x && place.getY() == y) {
+                place.setServices(newServices);
+                return place;
+            }
+            current = current.getNext();
+        }
+        return null; // If the place with given coordinates is not found
+    }
+
+    public void removeThePlace(int x, int y) {
+        ListNode current = head;
+        while (current != null) {
+            Place place = current.getData();
+            if (place.getX() == x && place.getY() == y) {
+                LinkedList list = new LinkedList();
+                list.remove(place);
+                System.out.println("Remove successfully");;
+            }
+            current = current.getNext();
+        }
+        System.out.println("No place found");; // If the place with given coordinates is not found
     }
 
     public void display() {
@@ -148,6 +179,23 @@ public class Map2D {
             System.out.println("Place not found.");
         }
 
+        // Edit the fuck out of it
+        String[] newServices = {"Merchandise"};
+        Place editedPlace = list.editThePlace(100, 100, newServices);
+        if (editedPlace != null) {
+            System.out.println("Newly edited place: " + editedPlace);
+        } else {
+            System.out.println("Place not found.");
+        }
+
+        // Remove it
+        list.removeThePlace(100, 100);
+        // try to find it
+        if (specificPlace != null) {
+            System.out.println("Found place: " + specificPlace);
+        } else {
+            System.out.println("Place not found.");
+        }
 
         // String[] services1 = {"Food stall", "Merchandise"};
         // Place place1 = new Place(1000,100,services1);
