@@ -1,5 +1,7 @@
 package Map2D_ADT;
 
+import java.util.Random;
+
 class Place {
     int x;
     int y;
@@ -93,6 +95,18 @@ class LinkedList {
     //     }
     // }
 
+    public Place getByCoordinates(int x, int y) {
+        ListNode current = head;
+        while (current != null) {
+            Place place = current.getData();
+            if (place.getX() == x && place.getY() == y) {
+                return place;
+            }
+            current = current.getNext();
+        }
+        return null; // If the place with given coordinates is not found
+    }
+
     public void display() {
         ListNode current = head;
         while (current != null) {
@@ -107,21 +121,33 @@ class LinkedList {
 public class Map2D {
     public static void main(String[] args) {
 
+        Random rand = new Random();
+
         String[] serviceTypes = {"Food stall", "Paper desk", "Merchandise", "Drink shop", "Book store", "Gas station", "School", "Restaurant", "Gym", "Arcade"};
 
+        // Generate place
         LinkedList list = new LinkedList();
-
-        int serviceCount = serviceTypes.length - 1;
+        Place placeTest = new Place(100, 100, serviceTypes);
+        list.add(placeTest);
         for (int i = 0; i <= 15; i++) {
-            int x = 10 * i;
-            int y = 20 * i + 5; // Adjust y to increment with i
+            int x = rand.nextInt(10000000);
+            int y = rand.nextInt(10000000);
             
-            String[] services = {serviceTypes[i % serviceCount + 1], serviceTypes[i % serviceCount]};
+            String[] services = {serviceTypes[rand.nextInt(serviceTypes.length)], serviceTypes[rand.nextInt(serviceTypes.length)]};
             Place place = new Place(x, y, services);
             list.add(place);
         }
 
         list.display();
+
+        // Pick a specific place
+        Place specificPlace = list.getByCoordinates(100, 100);
+        if (specificPlace != null) {
+            System.out.println("Found place: " + specificPlace);
+        } else {
+            System.out.println("Place not found.");
+        }
+
 
         // String[] services1 = {"Food stall", "Merchandise"};
         // Place place1 = new Place(1000,100,services1);
