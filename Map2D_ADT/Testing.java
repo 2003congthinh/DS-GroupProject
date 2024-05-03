@@ -8,19 +8,19 @@ public static Place[][] PlaceByCo = new Place[100][];                           
 
     // public static void sortByCoordinates(Place[] places) {
     //     // Categorize places by x-coordinate
-    //     for (Place place : places) {
-    //         int x = place.getX();
-    //         if (PlaceByCo[x] == null) {
-    //             PlaceByCo[x] = new Place[places.length]; // Assuming worst case
-    //         }
-    //         // Add place to the corresponding array in PlaceByCo
-    //         for (int i = 0; i < places.length; i++) {
-    //             if (PlaceByCo[x][i] == null) {
-    //                 PlaceByCo[x][i] = place;
-    //                 break;
-    //             }
-    //         }
-    //     }
+        // for (Place place : places) {
+        //     int x = place.getX();
+        //     if (PlaceByCo[x] == null) {
+        //         PlaceByCo[x] = new Place[places.length]; // Assuming worst case
+        //     }
+        //     // Add place to the corresponding array in PlaceByCo
+        //     for (int i = 0; i < places.length; i++) {
+        //         if (PlaceByCo[x][i] == null) {
+        //             PlaceByCo[x][i] = place;
+        //             break;
+        //         }
+        //     }
+        // }
 
     //     // Sort each subarray by y-coordinate
     //     for (int i = 0; i < 10; i++) {
