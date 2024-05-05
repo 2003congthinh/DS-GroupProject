@@ -3,7 +3,7 @@ package Map2D_ADT;
 import java.util.Random;
 
 public class SortAndSearch {
-    // Quick sort
+    // Quick sort by X
     private static void quickSortByX(X[] places, int low, int high) {
         if (low < high) {
             int pi = partitionByX(places, low, high);
@@ -30,6 +30,37 @@ public class SortAndSearch {
     // Swap places
     private static void swapX(X[] places, int i, int j) {
         X temp = places[i];
+        places[i] = places[j];
+        places[j] = temp;
+    }
+
+    // Quick sort by Y
+    private static void quickSortByY(Y[] places, int low, int high) {
+        if (low < high) {
+            int pi = partitionByY(places, low, high);
+            quickSortByY(places, low, pi - 1);
+            quickSortByY(places, pi + 1, high);
+        }
+    }
+
+    // Partition
+    private static int partitionByY(Y[] places, int low, int high) {
+        int pivot = places[high].getY();
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            // Skip null elements
+            if (places[j] != null && places[j].getY() < pivot) {
+                i++;
+                swapY(places, i, j);
+            }
+        }
+        swapY(places, i + 1, high);
+        return i + 1;
+    }    
+
+    // Swap places
+    private static void swapY(Y[] places, int i, int j) {
+        Y temp = places[i];
         places[i] = places[j];
         places[j] = temp;
     }
