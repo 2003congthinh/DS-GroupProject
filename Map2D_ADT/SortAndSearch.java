@@ -108,17 +108,18 @@ public class SortAndSearch {
                 Y Y = new Y(y, services);
                 ObjY[j] = Y;
             }
+            quickSortByY(ObjY, 0, ObjY.length-1);
             X X = new X(x, ObjY);
             ObjX[i] = X;
         }
-        System.out.println("\n"+"Before sort"+"\n");
-        for (X x : ObjX) {
-            System.out.println(x.getX());
-        }
+        // System.out.println("\n"+"Before sort"+"\n");
+        // for (X x : ObjX) {
+        //     System.out.println(x);
+        // }
         quickSortByX(ObjX, 0, ObjX.length - 1);
-        System.out.println("\n"+"After sort"+"\n");
+        // System.out.println("\n"+"After sort"+"\n");
         for (X x : ObjX) {
-            System.out.println(x.getX());
+            System.out.println(x);
         }
     }
 }
