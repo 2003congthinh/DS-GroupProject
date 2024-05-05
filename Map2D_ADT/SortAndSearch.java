@@ -14,11 +14,11 @@ public class SortAndSearch {
 
     // Partition
     private static int partitionByX(X[] places, int low, int high) {
-        int pivot = places[high].getX();
+        int pivot = places[high].getValue();
         int i = low - 1;
         for (int j = low; j < high; j++) {
             // Skip null elements
-            if (places[j] != null && places[j].getX() < pivot) {
+            if (places[j] != null && places[j].getValue() < pivot) {
                 i++;
                 swapX(places, i, j);
             }
@@ -35,7 +35,7 @@ public class SortAndSearch {
     }
 
     // Quick sort by Y
-    private static void quickSortByY(Y[] places, int low, int high) {
+    private static void quickSortByY(Service[] places, int low, int high) {
         if (low < high) {
             int pi = partitionByY(places, low, high);
             quickSortByY(places, low, pi - 1);
@@ -44,12 +44,18 @@ public class SortAndSearch {
     }
 
     // Partition
-    private static int partitionByY(Y[] places, int low, int high) {
-        int pivot = places[high].getY();
+    private static int partitionByY(Service[] places, int low, int high) {
+        // int pivot = places[high].getValue();
+        Service pivotItem = places[high];
+        if (pivotItem == null) {
+            return low;
+        }
+    
+        int pivot = pivotItem.getValue();
         int i = low - 1;
         for (int j = low; j < high; j++) {
             // Skip null elements
-            if (places[j] != null && places[j].getY() < pivot) {
+            if (places[j] != null && places[j].getValue() < pivot) {
                 i++;
                 swapY(places, i, j);
             }
@@ -59,136 +65,177 @@ public class SortAndSearch {
     }    
 
     // Swap places
-    private static void swapY(Y[] places, int i, int j) {
-        Y temp = places[i];
+    private static void swapY(Service[] places, int i, int j) {
+        Service temp = places[i];
         places[i] = places[j];
         places[j] = temp;
     }
-    public static void main(String[] args) {
-        // // Sample data
-        // String[] services1 = {"Service1", "Service2"};
-        // String[] services2 = {"Service3", "Service4"};
 
-        // // Creating Y objects
-        // Y y1 = new Y(10, services1);
-        // Y y2 = new Y(20, services2);
-
-        // // Creating X object with array of Y objects
-        // X x1 = new X(5, new Y[]{y1});
-        // X x2 = new X(15, new Y[]{y2});
-        // Accessing and printing data
-
-        // System.out.println("X: " + x1.x);
-        // for (Y y : x1.y) {
-        //     System.out.println("  Y: " + y.y);
-        //     for (String service : y.service) {
-        //         System.out.println("    Service: " + service);
-        //     }
-        // }
-
-        // System.out.println("X: " + x2.x);
-        // for (Y y : x2.y) {
-        //     System.out.println("  Y: " + y.y);
-        //     for (String service : y.service) {
-        //         System.out.println("    Service: " + service);
-        //     }
-        // }
-
+    // Generating place
+    public static X generate_x(int bound) {
         Random rand = new Random();
 
-        String[] serviceTypes = {"Food stall", "Paper desk", "Merchandise", "Drink shop", "Book store", "Gas station", "School", "Restaurant", "Gym", "Arcade"};
-        // Generate places
-        X[] ObjX = new X[15];
-        for (int i = 0; i < 15; i++) {
-            int x = rand.nextInt(10);
-            Y[] ObjY = new Y[10];
-            for (int j = 0; j < 10; j++) {
-                int y = rand.nextInt(10);
-                String[] services = {serviceTypes[rand.nextInt(serviceTypes.length)], serviceTypes[rand.nextInt(serviceTypes.length)]};
-                Y Y = new Y(y, services);
-                ObjY[j] = Y;
-            }
-            quickSortByY(ObjY, 0, ObjY.length-1);
-            X X = new X(x, ObjY);
-            ObjX[i] = X;
-        }
-        // System.out.println("\n"+"Before sort"+"\n");
-        // for (X x : ObjX) {
-        //     System.out.println(x);
-        // }
-        quickSortByX(ObjX, 0, ObjX.length - 1);
-        // System.out.println("\n"+"After sort"+"\n");
-        for (X x : ObjX) {
-            System.out.println(x);
-        }
-    }
-}
+        int value = rand.nextInt(bound);
+        Service[] service = new Service[1];
 
+        X x = new X(value, service);
 
-class X{
-    int x;
-    Y[] y;
-
-    public X(int x, Y[] y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
+    public static Service generate_service(int bound, String[] serviceType) {
+        Random rand = new Random();
 
-    public Y[] getY() {
-        return y;
-    }
+        int value = rand.nextInt(2,bound);
+        int randomIndex = rand.nextInt(serviceType.length);
+        String[] randomService = new String[1];
 
-    public void setY(Y[] y) {
-        this.y = y;
-    }
+        randomService[0] = serviceType[randomIndex];
 
-    @Override
-    public String toString() {
-        for (Y Y: y) {
-            System.out.println(Y);
+        Service service = new Service(value, randomService);
+
+        return service;
+    }
+    public static void main(String[] args) {
+        Random rand = new Random();
+        // Boundary for X and Y coordinates
+        int bound = 15;
+
+        // Service types for random selection
+        String[] serviceTypes = {"Park", "Cafe", "Library", "Hospital", "Gallery", "Theater", "Hotel", "Gym", "Zoo", "School"};
+
+        // Number of places
+        int num_Places = 40; 
+
+        int total_x = rand.nextInt(num_Places) + 1; // remove 0
+        int remainder = num_Places - total_x; // number of extra Y need to generate for same X coordinate
+
+        X[] array_x = new X[total_x]; // 15 elements
+        
+        for (int i = 0; i < total_x; i++) {
+            X x_coor = generate_x(bound); // create Object X
+            int total_y = rand.nextInt(remainder + 1) + 1; // each X guarantee to have at least 1 Y (+1)
+            Service[] serviceList = new Service[remainder+1];
+            remainder -= total_y - 1; // -1 to remove the guarantee Y
+
+            // Check if this is the last iteration 
+            // if there is still remainder needed to generate
+            if (i == total_x - 1 && remainder != 0) {
+                total_y += remainder;
+            }
+
+            // Generate Y and service
+            for (int j = 0; j < total_y; j++) {
+                Service service = generate_service(bound, serviceTypes);
+                serviceList[j] = service;
+            }
+
+            quickSortByY(serviceList, 0, serviceList.length - 1);
+
+            x_coor.setService(serviceList);
+            x_coor.removeNull();
+            array_x[i] = x_coor;
         }
-        return "X [x=" + x + "]";
+
+        quickSortByX(array_x, 0, array_x.length - 1);
+        for (int i = 0; i < array_x.length; i++) {
+            System.out.println(array_x[i].toString());
+        }
     }
 }
 
-class Y{
-    int y;
-    String[] services;
 
-    public Y(int y, String[] services) {
-        this.y = y;
-        this.services = services;
+class X {
+    private int value;
+    private Service[] service;
+
+    public X(int value, Service[] service) {
+        this.value = value;
+        this.service = service;
     }
 
-    public int getY() {
-        return y;
+    public void removeNull() {
+        Service[] serviceArray = getService();
+
+        int count = 0;
+        for (Service service : serviceArray) {
+            if (service != null) {
+                count++;
+            }
+        }
+
+        Service[] newArray = new Service[count];
+
+        for (int i = 0; i < serviceArray.length; i++) {
+            if (serviceArray[i] != null) {
+                newArray[i] = serviceArray[i];
+            }
+        }
+
+        setService(newArray);
     }
 
-    public void setY(int y) {
-        this.y = y;
+    // Getters
+    public int getValue() {
+        return value;
     }
 
-    public String[] getServices() {
-        return services;
+    public Service[] getService() {
+        return service;
     }
 
-    public void setServices(String[] services) {
-        this.services = services;
+    // Setters
+    public void setService(Service[] service) {
+        this.service = service;
     }
 
     @Override
     public String toString() {
-        for (String service: services) {
-            System.out.println(service);
+        String services = "";
+        for (Service service : service) {
+            if (service != null) {
+                // services += service.getValue() +" ";
+                // for (int i = 0; i < service.getService().length; i++) {
+                //     services += service.getService()[i]+", ";
+                // }
+
+                services += service.toString();
+            }
         }
-        return "Y [y=" + y + "]";
+        return "X Value: " + value + " - Service: " + services;
+    }
+}
+
+class Service {
+    private int value;
+    private String[] service;
+
+    public Service(int value, String[] service) {
+        this.value = value;
+        this.service = service;
+    }
+
+    // Getters
+    public int getValue() {
+        return value;
+    }
+
+    public String[] getService() {
+        return service;
+    }
+
+    // Setters
+    public void setService(String[] service) {
+        this.service = service;
+    }
+
+    @Override
+    public String toString() {
+        String serviceList = "";
+        for (String service : service) {
+            serviceList += service;
+        }
+
+        return "Value Y: " + value + " - Service: " + serviceList;
     }
 }
