@@ -1,6 +1,6 @@
 package Map2D_ADT;
 
-public class Service {
+class Service {
     private int value;
     private String[] service;
 

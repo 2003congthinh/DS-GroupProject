@@ -120,6 +120,106 @@ public class SortAndSearch {
         return newArray;
     }
 
+    public static X[] addPlacesToNullX(int index, X placesSameX, X[] places) {
+        int size = places.length;
+        X[] newPlaces = new X[size + 1];
+        int count = 0;
+        if (size == 0) {
+            newPlaces[0] = placesSameX;
+        } else {
+            for (int i = 0; i < newPlaces.length; i++) {
+                if (i == index) {
+                    newPlaces[i] = placesSameX;
+                    continue;
+                }
+                newPlaces[i] = places[count];
+                count++;
+            };
+        };
+        return newPlaces;
+    };
+
+    // [objx, objx, objx,...]. objx = x + [objy, objy, objy,...]. objy = y + String[]service
+    public static X[] addPlace(int x, int y, String[] services, X[] places) {
+        // If x is not null
+        for (X placeSameX : places) {
+            if (placeSameX.getValue() == x) {
+                // Find index of place
+                int size = placeSameX.getService().length;
+                int index = size;
+                for (int i = 0; i < size; i++) {
+                    int valueY = placeSameX.getService()[i].getValue();
+                    if (valueY > y) {
+                        index = i;
+                        break;
+                    }
+                };
+                // Create a new array
+                Service[] newPlacesY = new Service[size+1];
+                // Insert elements after the index
+                for (int j = size; j > index; j--) { 
+                    newPlacesY[j] = placeSameX.getService()[j-1];
+                };
+                newPlacesY[index] = new Service(y, services);
+                // Insert elements before the index
+                for (int j = 0; j < index; j++) { 
+                    newPlacesY[j] = placeSameX.getService()[j];
+                };
+                placeSameX.setService(newPlacesY);
+                return places;
+            };
+        };
+
+        // If x is null
+        Service[] place = {new Service(y, services)};
+        X newPlacesX = new X(x, null);
+        newPlacesX.setService(place);
+        int index = places.length;
+        for (int i = 0; i < places.length; i++) {
+            if (places[i].getValue() > x) {
+                index = i;
+                break;
+            }
+        };
+        places = addPlacesToNullX(index, newPlacesX, places);
+        return places;
+    };
+
+    public static X[] removePlace(int x, int y, X[] places) {
+        for (X placeSameX : places) {
+            if (placeSameX.getValue() == x) {
+                // Find index of the Y object with the specified y value
+                int index = -1;
+                for (int i = 0; i < placeSameX.getService().length; i++) {
+                    if (placeSameX.getService()[i].getValue() == y) {
+                        index = i;
+                        break;
+                    }
+                }
+                // If the Y object with the specified y value is found
+                if (index != -1) {
+                    // Create a new array with size - 1
+                    Service[] newPlacesY = new Service[placeSameX.getService().length - 1];
+                    // Copy elements before the index
+                    for (int j = 0; j < index; j++) {
+                        newPlacesY[j] = placeSameX.getService()[j];
+                    }
+                    // Copy elements after the index
+                    for (int j = index + 1; j < placeSameX.getService().length; j++) {
+                        newPlacesY[j - 1] = placeSameX.getService()[j];
+                    }
+                    // Set the modified Y array to the X object
+                    placeSameX.setService(newPlacesY);
+                }
+                // Return the modified places array
+                return places;
+            }
+        }
+    
+        // If the X object with the specified x value is not found, return the original places array
+        return places;
+    }
+
     // Client
     public static void main(String[] args) {
         Random rand = new Random();
@@ -149,6 +249,17 @@ public class SortAndSearch {
                 total_y += remainder;
             }
 
+            // Add new place manually for testing purposes
+            // if (i == 0){
+            //     Service[] y = new Service[] {
+            //         new Service(100, new String[]{"Test"}),
+            //         new Service(200, new String[]{"Test"}),
+            //         new Service(300, new String[]{"Test"}),
+            //     };
+            //     x_coor.setService(y);
+            //     array_x[i] = x_coor;
+            // }
+
             // Create Object Service
             for (int j = 0; j < total_y; j++) {
                 Service service = generate_service(bound, serviceTypes);
@@ -176,5 +287,12 @@ public class SortAndSearch {
         for (int i = 0; i < array_x.length; i++) {
             System.out.println(array_x[i].toString());
         }
+
+        // remove a place
+        // removePlace(100, 100, array_x);
+        // for (int i = 0; i < array_x.length; i++) {
+        //     System.out.println(array_x[i].toString());
+        // }
+
     }
 }
