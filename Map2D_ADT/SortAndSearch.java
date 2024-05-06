@@ -129,11 +129,10 @@ public class SortAndSearch {
                 Service service = generate_service(bound, serviceTypes);
                 serviceList[j] = service;
             }
-
-            quickSortByY(serviceList, 0, serviceList.length - 1);
-
+            
             x_coor.setService(serviceList);
             x_coor.removeNull();
+            quickSortByY(x_coor.getService(), 0, x_coor.getService().length - 1);
             array_x[i] = x_coor;
         }
 
