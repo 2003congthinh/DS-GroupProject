@@ -204,28 +204,51 @@ public class Map2D {
     public static X[] removePlace(int x, int y, X[] places) {
         for (X placeSameX : places) {
             if (placeSameX.getValue() == x) {
-                // Find index of the Y object with the specified y value
-                int index = -1;
-                for (int i = 0; i < placeSameX.getService().length; i++) {
-                    if (placeSameX.getService()[i].getValue() == y) {
-                        index = i;
-                        break;
+                // Delete x if x only have 1 place
+                if (placeSameX.getService().length == 1 && placeSameX.getService()[0].getValue() == y){
+                    int indexX = -1;
+                    for (int i = 0; i < places.length; i++){
+                        if (places[i] == placeSameX){
+                            indexX = i;
+                            break;
+                        }
                     }
-                }
-                // If the Y object with the specified y value is found
-                if (index != -1) {
                     // Create a new array with size - 1
-                    Service[] newPlacesY = new Service[placeSameX.getService().length - 1];
+                    X[] newArray = new X[places.length - 1];
                     // Copy elements before the index
-                    for (int j = 0; j < index; j++) {
-                        newPlacesY[j] = placeSameX.getService()[j];
+                    for (int j = 0; j < indexX; j++) {
+                        newArray[j] = places[j];
                     }
                     // Copy elements after the index
-                    for (int j = index + 1; j < placeSameX.getService().length; j++) {
-                        newPlacesY[j - 1] = placeSameX.getService()[j];
+                    for (int j = indexX + 1; j < places.length; j++) {
+                        newArray[j - 1] = places[j];
                     }
                     // Set the modified Y array to the X object
-                    placeSameX.setService(newPlacesY);
+                    places = newArray; 
+                } else {
+                    // Find index of the Y object with the specified y value
+                    int index = -1;
+                    for (int i = 0; i < placeSameX.getService().length; i++) {
+                        if (placeSameX.getService()[i].getValue() == y) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    // If the Y object with the specified y value is found
+                    if (index != -1) {
+                        // Create a new array with size - 1
+                        Service[] newPlacesY = new Service[placeSameX.getService().length - 1];
+                        // Copy elements before the index
+                        for (int j = 0; j < index; j++) {
+                            newPlacesY[j] = placeSameX.getService()[j];
+                        }
+                        // Copy elements after the index
+                        for (int j = index + 1; j < placeSameX.getService().length; j++) {
+                            newPlacesY[j - 1] = placeSameX.getService()[j];
+                        }
+                        // Set the modified Y array to the X object
+                        placeSameX.setService(newPlacesY);
+                    }
                 }
                 // Return the modified places array
                 return places;
@@ -235,6 +258,20 @@ public class Map2D {
         // If the X object with the specified x value is not found, return the original places array
         return places;
     }
+
+    public static boolean editPlace(int x, int y, String[] services, X[] places) {
+        for (X place : places) {
+            if (place.getValue() == x) {
+                for (Service service : place.getService()) {
+                    if (service.getValue() == y) {
+                        service.setService(services);
+                        return true;
+                    };
+                };
+            };
+        };
+        return false;
+    };
 
     public static void main(String[] args) {
         Random rand = new Random();
@@ -352,7 +389,7 @@ public class Map2D {
                     System.out.println("You want to REMOVE(1) or EDIT(2) place:");
                     int choice = scanner3.nextInt();
                     if (choice == 1) {
-                        removePlace(xInput, yInput, array_x);
+                        array_x = removePlace(xInput, yInput, array_x);
                     } else {
                         String[] services = new String[0];
                         System.out.println("Choose some of services in the below types:");
@@ -370,7 +407,7 @@ public class Map2D {
                             // add a new service to list
                             services = addService(serviceInput, services);
                         };
-                        // list.editThePlace(xInput, yInput, services);
+                        editPlace(xInput, yInput, services, array_x);
                     }
                     for (int i = 0; i < array_x.length; i++) {
                         System.out.println(array_x[i].toString());
