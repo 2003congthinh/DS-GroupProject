@@ -100,6 +100,7 @@ public class Map2D {
         return service;
     }
 
+    // Return array with no duplicates
     public static X[] removeDupX(X[] array_x) {
         // Unique will be the new length 
         int unique = 1; // the first element will alway be unique
@@ -119,6 +120,226 @@ public class Map2D {
             }
         }
         return newArray;
+    }
+
+    public static Object[] copyArrayObject(Object[] source, int startSource, Object[] destination, int startDes, int length) {
+        for (int i = 0; i < length; i++) {
+            Object copyObject = source[startSource + i];
+            destination[startDes + i] = copyObject;
+        }
+
+        return destination;
+    }
+
+    public static double findDistance(int[] coor1, int[] coor2) {
+        int x1 = coor1[0];
+        int y1 = coor1[1];
+        int x2 = coor2[0];
+        int y2 = coor2[1];
+    
+        double squareX = (double)(x2 - x1) * (x2 - x1);
+        double squareY = (double)(y2 - y1) * (y2 - y1);
+    
+        double distance = Math.sqrt(squareX + squareY);
+    
+        return distance;
+    }
+    
+
+    // Return Start and End boundary index
+    public static int[] findBound(int center, int length) {
+        int[] target = new int[2];
+        if (length % 2 != 0) {
+            length--;
+        }
+
+        length = length / 2;
+        target[0] = center - length;
+        target[1] = center + length;
+
+        return target;  
+    }
+    
+    // Return the Start and End index of search range for array_x
+    public static int[] binarySearch(int[] boundary, X[] arrayX) {
+        int[] notFound = new int[0];
+        // If start boundary is larger than the largest value of the arrayX, return empty array - notFound
+        if (boundary[0] > arrayX[arrayX.length-1].getValue()) {
+            return notFound;
+        }
+        // If end boundary is smaller than the smallest value of the arrayX, return empty array - notFound
+        if (boundary[1] < arrayX[0].getValue()) {
+            return notFound;
+        }
+
+        int[] result = new int[2];
+
+        // Search for start index
+        int startIndex = searchHigher(boundary[0], arrayX);
+
+        // Search for end index
+        int endIndex = searchLower(boundary[1], arrayX);
+
+        result[0] = startIndex;
+        result[1] = endIndex;
+
+        return result;
+    }
+
+    // Return the index that value is >= target X boundary (Start index)
+    public static int searchHigher(int target, X[] arrayX) {
+        int low = 0;
+        int high = arrayX.length - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int midValue = arrayX[mid].getValue();
+
+            if (target == midValue) {
+                return mid;
+            } else if (midValue - target > 0) {
+                high = mid - 1;
+            } else if (midValue - target < 0) {
+                low = mid + 1;
+            }   
+        }
+        
+         /*
+          * When come down here, that means there is no value = target
+          but we need to find the value is >= target, so
+          increment low until the value of index low is greater than the target
+          */
+        while (arrayX[low].getValue() < target) {
+            low++;
+        }
+        return low;
+    }
+
+    // Return the index that value is <= target X boundary (End index)
+    public static int searchLower(int target, X[] arrayX) {
+        int low = 0;
+        int high = arrayX.length - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int midValue = arrayX[mid].getValue();
+
+            if (target == midValue) {
+                return mid;
+            } else if (midValue - target > 0) {
+                high = mid - 1;
+            } else if (midValue - target < 0) {
+                low = mid + 1;
+            }   
+        }
+        
+         /*
+          * When come down here, that means there is no value = target
+          but we need to find the value is <= target, so
+          Decrement high until the value of index high is lower than the target
+          */
+        while (arrayX[high].getValue() > target) {
+            high--;
+        }
+        return high;
+    }
+
+    // return true if the coordinate is unique among the foundCoordinate array
+    public static boolean uniqueCoor(double[][] foundCoordinate, int coordinateX, int coordinateY) {
+        for (double[] coor : foundCoordinate) {
+            if (coor[0] == coordinateX && coor[1] == coordinateY) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // return true if serviceType is equals to targetService
+    public static boolean containServiceType(Service serviceObject, String targetService) {
+        for (String serviceType : serviceObject.getService()) {
+            // get coordinate with targetService servie type only
+            if (serviceType.equals(targetService)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Return 2d array contains 50 arrays with X, Y and Distance value, with the shortest Distance to the centerCoordinate
+    public static double[][] findNearbyService(X[] targetArrayX, int[] centerCoordinate, String targetService, int[] boundaryY, int[] farthestCoor) {
+        double[][] foundCoordinate = new double[50][3]; // Format : [X_Coordinate, Y_Coordinate, Distance]
+        // Find all coordinates with the same targetService type
+        for (X objectX : targetArrayX) {
+            int[] rangeY = objectX.binarySearch(boundaryY);
+            if (rangeY.length == 0) {
+                continue; // skip this one because there is no available Y
+            }
+            int copyY = rangeY[1] - rangeY[0] + 1; // end index - start index 
+            Object[] targetArrayObject = new Service[copyY];
+
+            targetArrayObject = copyArrayObject(objectX.getService(), rangeY[0], targetArrayObject, 0, copyY);
+            Service[] targetArrayService = (Service[]) targetArrayObject; // all valid Service object store here
+            
+            for (Service serviceObject : targetArrayService) {
+                if (!containServiceType(serviceObject, targetService)) {
+                    continue;
+                }
+                int[] coor = new int[]{objectX.getValue(), serviceObject.getValue()};
+                double distance = findDistance(coor, centerCoordinate); // calculate distance between the current coor and centerCoordinate
+                double[] farthestDistance = new double[]{0, 0}; // Store the index and the distance value of the farthest coordinate from the foundCoordinate array
+                double[] coordinate = new double[]{objectX.getValue(), serviceObject.getValue(), distance};
+                for (int i = 0; i < foundCoordinate.length; i++) {
+                    if (foundCoordinate[i][0] == 0 && foundCoordinate[i][1] == 0) {
+                        if (uniqueCoor(foundCoordinate, objectX.getValue(), serviceObject.getValue())) {
+                            foundCoordinate[i] = coordinate;
+                        }
+                    }
+
+                    if (foundCoordinate[i][2] > farthestDistance[1]) {
+                        farthestDistance[0] = i;
+                        farthestDistance[1] = foundCoordinate[i][2];
+                    }
+
+                }
+                // if 
+                if (distance < farthestDistance[1]) {
+                    if (uniqueCoor(foundCoordinate, objectX.getValue(), serviceObject.getValue())) {
+                        int index = (int) farthestDistance[0];
+                        foundCoordinate[index] = coordinate;
+                    }
+                }
+            }
+        }
+        return foundCoordinate;
+    }
+
+    // Return back what function findNearbyService() return
+    public static double[][] search(int x_coor, int y_coor, int width, int height, String targetService, X[] arrayX) {
+        double[][] foundCoordinate = new double[50][];
+        // Get the boundary index for X and Y coordinates
+        int[] boundaryX = findBound(x_coor, width);
+        int[] boundaryY = findBound(y_coor, height);
+
+        // Get the target index of X coordinate, the Start and End index for our array_x
+        int[] rangeX = binarySearch(boundaryX, arrayX);
+        if (rangeX.length == 0) {
+            System.out.println("No service found in the given boundary.");
+            return foundCoordinate;
+        }
+
+        int copyX = rangeX[1] - rangeX[0] + 1;
+        Object[] targetArrayObject = new X[copyX];
+        targetArrayObject = copyArrayObject(arrayX, rangeX[0], targetArrayObject, 0, copyX);
+        X[] targetArrayX = (X[]) targetArrayObject;
+
+        int farthestX = x_coor + width + 1;
+        int farthestY = y_coor + height + 1;
+        int[] farthestCoor = new int[]{farthestX, farthestY};
+        int[] centerCoordinate = new int[]{x_coor, y_coor};
+
+        foundCoordinate = findNearbyService(targetArrayX, centerCoordinate, targetService, boundaryY, farthestCoor);
+
+        return foundCoordinate;
     }
 
     //add service to list of services
@@ -377,20 +598,47 @@ public class Map2D {
 
                     // Official search
 
-                    // System.out.println("The width of the bounding rectangle: ");
-                    // int wInput = scanner3.nextInt();
-                    // System.out.println("The height of the bounding rectangle: ");
-                    // int hInput = scanner3.nextInt();
-                    // System.out.println("The service of the places you want to find: ");
-                    // String sInput = scanner3.nextLine();
+                    System.out.println("The width of the bounding rectangle: ");
+                    int wInput = scanner3.nextInt();
+                    System.out.println("The height of the bounding rectangle: ");
+                    int hInput = scanner3.nextInt();
+                    // Consume newline character
+                    scanner3.nextLine();
 
+                    System.out.println("Choose some of services in the below types:");
+                    for (String service : serviceTypes) {
+                        System.out.printf("%s\n", service);
+                    }
+                    System.out.println("The service of the places you want to find: ");
+                    String sInput = scanner3.nextLine();
+
+                    double[][] test12 = search(xInput, yInput, wInput, hInput, sInput, array_x); // example search
+                    boolean found = false;
+                    for (int i = 0; i < test12.length; i++) {
+                        if (test12[i] != null) {
+                            System.out.println("Place number:" + i + " - X = " + test12[i][0] + " , Y = " + test12[i][1] + " - Dis = " + test12[i][2]);
+                            found = true;
+                        }
+                    }
+            
+                    if (!found) {
+                        System.out.println("There is no Service Type:"+"near the center");
+                    }
                     // Testing REMOVE and ADD and EDIT
 
-                    System.out.println("You want to REMOVE(1) or EDIT(2) place:");
+                    System.out.println("You want to REMOVE(1) or EDIT(2) or ADD(3) place:");
                     int choice = scanner3.nextInt();
                     if (choice == 1) {
-                        array_x = removePlace(xInput, yInput, array_x);
-                    } else {
+                        System.out.println("The x-coordinate of the place: ");
+                        int xRemove = scanner3.nextInt();
+                        System.out.println("The y-coordinate of the place: ");
+                        int yRemove = scanner3.nextInt();
+                        array_x = removePlace(xRemove, yRemove, array_x);
+                    } else if (choice == 2) {
+                        System.out.println("The x-coordinate of the place: ");
+                        int xEdit = scanner3.nextInt();
+                        System.out.println("The y-coordinate of the place: ");
+                        int yEdit = scanner3.nextInt();
                         String[] services = new String[0];
                         System.out.println("Choose some of services in the below types:");
                         for (String service : serviceTypes) {
@@ -407,11 +655,35 @@ public class Map2D {
                             // add a new service to list
                             services = addService(serviceInput, services);
                         };
-                        editPlace(xInput, yInput, services, array_x);
+                        editPlace(xEdit, yEdit, services, array_x);
+                    } else if (choice == 3) {
+                        System.out.println("The x-coordinate of the place: ");
+                        int xAdd = scanner3.nextInt();
+                        System.out.println("The y-coordinate of the place: ");
+                        int yAdd = scanner3.nextInt();
+                        String[] services = new String[0];
+                        //Place place = new Place(xInput, yInput, services);
+                        System.out.println("Choose some of services in the below types:");
+                        for (String service : serviceTypes) {
+                            System.out.printf("%s\n", service);
+                        }
+                        System.out.println("Types of service (Press q to quit adding new service):");
+                        scanner3.nextLine(); // to consume the new line
+                        while (true) {
+                            String serviceInput = scanner3.nextLine();// to quit the loop
+                            if (serviceInput.equals("q")) {
+                                break;
+                            }
+                            // create a new list of services
+                            services = addService(serviceInput, services);
+                        };
+                        // place.setServices(services); // set new services to the place
+                        // list.add(place);
+                        array_x = addPlace(xAdd, yAdd, services, array_x);
                     }
-                    for (int i = 0; i < array_x.length; i++) {
-                        System.out.println(array_x[i].toString());
-                    }
+                    // for (int i = 0; i < array_x.length; i++) {
+                    //     System.out.println(array_x[i].toString());
+                    // }
                     break;
                 }
                 case "3": {
