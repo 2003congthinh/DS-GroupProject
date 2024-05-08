@@ -70,12 +70,12 @@ class X {
 
     @Override
     public String toString() {
-        String services = "";
+        String result = "";
         for (Service service : service) {
             if (service != null) {
-                services += service.toString();
+                result += "X Value: " + value + " - Service Object: " + service.toString() + "\n";
             }
         }
-        return "X Value: " + value + " - Service Object: " + services;
+        return result;
     }
 }

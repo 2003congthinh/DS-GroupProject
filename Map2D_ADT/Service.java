@@ -26,10 +26,13 @@ class Service {
     @Override
     public String toString() {
         String serviceList = "";
-        for (String service : service) {
-            serviceList += service;
+        if (service.length > 1) {
+            for (String service : service) {
+                serviceList += service + ",  ";
+            }
+        } else {
+            serviceList = service[0];
         }
-
-        return "Value Y: " + value + " - Service: " + serviceList+"; ";
+        return "Value Y: " + value + " - Service: " + serviceList +"; ";
     }
 }
