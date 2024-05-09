@@ -144,7 +144,6 @@ public class Map2D {
     
         return distance;
     }
-    
 
     // Return Start and End boundary index
     public static int[] findBound(int center, int length) {
@@ -384,13 +383,6 @@ public class Map2D {
                 // Find index of place
                 int size = placeSameX.getService().length;
                 int index = placeSameX.searchHigher(y);
-                // for (int i = 0; i < size; i++) {
-                //     int valueY = placeSameX.getService()[i].getValue();
-                //     if (valueY > y) {
-                //         index = i;
-                //         break;
-                //     }
-                // };
 
                 // Create a new array
                 Service[] newPlacesY = new Service[size+1];
@@ -413,13 +405,6 @@ public class Map2D {
         X newPlacesX = new X(x, null);
         newPlacesX.setService(place);
         int index = searchHigher(x, places);
-        // int index = places.length;
-        // for (int i = 0; i < places.length; i++) {
-        //     if (places[i].getValue() > x) {
-        //         index = i;
-        //         break;
-        //     }
-        // };
         places = addPlacesToNullX(index, newPlacesX, places);
         return places;
     };
@@ -430,12 +415,6 @@ public class Map2D {
                 // Delete x if x only have 1 place
                 if (placeSameX.getService().length == 1 && placeSameX.getService()[0].getValue() == y){
                     int indexX = searchHigher(x, places);
-                    // for (int i = 0; i < places.length; i++){
-                    //     if (places[i] == placeSameX){
-                    //         indexX = i;
-                    //         break;
-                    //     }
-                    // }
                     // Create a new array with size - 1
                     X[] newArray = new X[places.length - 1];
                     // Copy elements before the index
@@ -452,12 +431,6 @@ public class Map2D {
                     // Find index of the Y object with the specified y value
                     int indexOfX = searchHigher(x, places);
                     int index = places[indexOfX].searchHigher(y);
-                    // for (int i = 0; i < placeSameX.getService().length; i++) {
-                    //     if (placeSameX.getService()[i].getValue() == y) {
-                    //         index = i;
-                    //         break;
-                    //     }
-                    // }
                     // If the Y object with the specified y value is found
                     if (index != -1) {
                         // Create a new array with size - 1
@@ -478,22 +451,11 @@ public class Map2D {
                 return places;
             }
         }
-    
         // If the X object with the specified x value is not found, return the original places array
         return places;
     }
 
     public static boolean editPlace(int x, int y, String[] services, X[] places) {
-        // for (X place : places) {
-        //     if (place.getValue() == x) {
-        //         for (Service service : place.getService()) {
-        //             if (service.getValue() == y) {
-        //                 service.setService(services);
-        //                 return true;
-        //             };
-        //         };
-        //     };
-        // };
         int indexOfX = searchHigher(x, places);
         int indexOfY = places[indexOfX].searchHigher(y);
         places[indexOfX].getService()[indexOfY].setService(services);
@@ -558,9 +520,6 @@ public class Map2D {
 
             switch (menuInput) {
                 case "1": {
-                    // for (int i = 0; i < array_x.length; i++) {
-                    //     System.out.println(array_x[i].toString());
-                    // }
                     Scanner scanner3 = new Scanner(System.in);
                     System.out.println("The x-coordinate of the searching point: ");
                     int xInput = scanner3.nextInt();
@@ -633,7 +592,6 @@ public class Map2D {
                         System.out.println("The y-coordinate of the place: ");
                         int yAdd = scanner3.nextInt();
                         String[] services = new String[0];
-                        //Place place = new Place(xInput, yInput, services);
                         System.out.println("Choose some of services in the below types:");
                         for (String service : serviceTypes) {
                             System.out.printf("%s\n", service);
@@ -648,15 +606,10 @@ public class Map2D {
                             // create a new list of services
                             services = addService(serviceInput, services);
                         };
-                        // place.setServices(services); // set new services to the place
-                        // list.add(place);
                         array_x = addPlace(xAdd, yAdd, services, array_x);
                     } else if (choice == 4) {
                         break;
                     }
-                    // for (int i = 0; i < array_x.length; i++) {
-                    //     System.out.println(array_x[i].toString());
-                    // }
                     break;
                 }
                 case "2": {
