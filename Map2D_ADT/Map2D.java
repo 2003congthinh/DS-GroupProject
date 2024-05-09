@@ -404,7 +404,7 @@ public class Map2D {
         Service[] place = {new Service(y, services)};
         X newPlacesX = new X(x, null);
         newPlacesX.setService(place);
-        int index = searchHigher(x, places);
+        int index = searchLower(x, places);
         places = addPlacesToNullX(index, newPlacesX, places);
         return places;
     };
@@ -455,23 +455,22 @@ public class Map2D {
         return places;
     }
 
-    public static boolean editPlace(int x, int y, String[] services, X[] places) {
+    public static void editPlace(int x, int y, String[] services, X[] places) {
         int indexOfX = searchHigher(x, places);
         int indexOfY = places[indexOfX].searchHigher(y);
         places[indexOfX].getService()[indexOfY].setService(services);
-        return false;
     };
 
     public static void main(String[] args) {
         Random rand = new Random();
         // Boundary for X and Y coordinates
-        int bound = 15;
+        int bound = 10000000;
 
         // Service types for random selection
         String[] serviceTypes = {"Park", "Cafe", "Library", "Hospital", "Gallery", "Theater", "Hotel", "Gym", "Zoo", "School"};
 
         // Number of place to generate
-        int num_Places = 40; 
+        int num_Places = 100000000; 
 
         int total_x = rand.nextInt(num_Places) + 1; // remove 0
         int remainder = num_Places - total_x; // number of extra Y need to generate for same X coordinate
@@ -520,95 +519,102 @@ public class Map2D {
 
             switch (menuInput) {
                 case "1": {
-                    Scanner scanner3 = new Scanner(System.in);
-                    System.out.println("The x-coordinate of the searching point: ");
-                    int xInput = scanner3.nextInt();
-                    System.out.println("The y-coordinate of the searching point: ");
-                    int yInput = scanner3.nextInt();
+                    try {
+                        Scanner scanner3 = new Scanner(System.in);
+                        System.out.println("The x-coordinate of the searching point: ");
+                        int xInput = scanner3.nextInt();
+                        System.out.println("The y-coordinate of the searching point: ");
+                        int yInput = scanner3.nextInt();
 
-                    // Official search
+                        // Official search
 
-                    System.out.println("The width of the bounding rectangle: ");
-                    int wInput = scanner3.nextInt();
-                    System.out.println("The height of the bounding rectangle: ");
-                    int hInput = scanner3.nextInt();
-                    // Consume newline character
-                    scanner3.nextLine();
+                        System.out.println("The width of the bounding rectangle: ");
+                        int wInput = scanner3.nextInt();
+                        System.out.println("The height of the bounding rectangle: ");
+                        int hInput = scanner3.nextInt();
+                        // Consume newline character
+                        scanner3.nextLine();
 
-                    System.out.println("Choose some of services in the below types:");
-                    for (String service : serviceTypes) {
-                        System.out.printf("%s\n", service);
-                    }
-                    System.out.println("The service of the places you want to find: ");
-                    String sInput = scanner3.nextLine();
-
-                    double[][] test12 = search(xInput, yInput, wInput, hInput, sInput, array_x); // example search
-                    boolean found = false;
-                    for (int i = 0; i < test12.length; i++) {
-                        if (test12[i] != null) {
-                            System.out.println("Place number:" + i + " - X = " + test12[i][0] + " , Y = " + test12[i][1] + " - Dis = " + test12[i][2]);
-                            found = true;
-                        }
-                    }
-            
-                    if (!found) {
-                        System.out.println("There is no Service Type:"+"near the center");
-                    }
-                    // Testing REMOVE and ADD and EDIT
-
-                    System.out.println("You want to REMOVE(1) or EDIT(2) or ADD(3) place (to quit, enter \"4\"):");
-                    int choice = scanner3.nextInt();
-                    if (choice == 1) {
-                        System.out.println("The x-coordinate of the place: ");
-                        int xRemove = scanner3.nextInt();
-                        System.out.println("The y-coordinate of the place: ");
-                        int yRemove = scanner3.nextInt();
-                        array_x = removePlace(xRemove, yRemove, array_x);
-                    } else if (choice == 2) {
-                        System.out.println("The x-coordinate of the place: ");
-                        int xEdit = scanner3.nextInt();
-                        System.out.println("The y-coordinate of the place: ");
-                        int yEdit = scanner3.nextInt();
-                        String[] services = new String[0];
-                        System.out.println("Choose some of services in the below types:");
-                        for (String service : serviceTypes) {
-                            System.out.printf("%s\n", service);
-                        };
-                        System.out.println("Types of service (Press q to quit adding new service):");
-                        scanner3.nextLine(); // to consume the new line
-                        // create a list of services
-                        while (true) {
-                            String serviceInput = scanner3.nextLine();// to quit the loop
-                            if (serviceInput.equals("q")) {
-                                break;
-                            }
-                            // add a new service to list
-                            services = addService(serviceInput, services);
-                        };
-                        editPlace(xEdit, yEdit, services, array_x);
-                    } else if (choice == 3) {
-                        System.out.println("The x-coordinate of the place: ");
-                        int xAdd = scanner3.nextInt();
-                        System.out.println("The y-coordinate of the place: ");
-                        int yAdd = scanner3.nextInt();
-                        String[] services = new String[0];
                         System.out.println("Choose some of services in the below types:");
                         for (String service : serviceTypes) {
                             System.out.printf("%s\n", service);
                         }
-                        System.out.println("Types of service (Press q to quit adding new service):");
-                        scanner3.nextLine(); // to consume the new line
-                        while (true) {
-                            String serviceInput = scanner3.nextLine();// to quit the loop
-                            if (serviceInput.equals("q")) {
-                                break;
+                        System.out.println("The service of the places you want to find: ");
+                        String sInput = scanner3.nextLine();
+
+                        boolean exitLoop = false;
+                        while (!exitLoop) {
+                            double[][] test12 = search(xInput, yInput, wInput, hInput, sInput, array_x); // example search
+                            boolean found = false;
+                            for (int i = 0; i < test12.length; i++) {
+                                if (test12[i] != null) {
+                                    System.out.println("Place number:" + i + " - X = " + test12[i][0] + " , Y = " + test12[i][1] + " - Dis = " + test12[i][2]);
+                                    found = true;
+                                }
                             }
-                            // create a new list of services
-                            services = addService(serviceInput, services);
-                        };
-                        array_x = addPlace(xAdd, yAdd, services, array_x);
-                    } else if (choice == 4) {
-                        break;
+                    
+                            if (!found) {
+                                System.out.println("There is no Service Type:"+"near the center");
+                            }
+                            // Testing REMOVE and ADD and EDIT
+
+                            System.out.println("You want to REMOVE(1) or EDIT(2) or ADD(3) place (to quit, enter \"4\"):");
+                            int choice = scanner3.nextInt();
+                            if (choice == 1) {
+                                System.out.println("The x-coordinate of the place: ");
+                                int xRemove = scanner3.nextInt();
+                                System.out.println("The y-coordinate of the place: ");
+                                int yRemove = scanner3.nextInt();
+                                array_x = removePlace(xRemove, yRemove, array_x);
+                            } else if (choice == 2) {
+                                System.out.println("The x-coordinate of the place: ");
+                                int xEdit = scanner3.nextInt();
+                                System.out.println("The y-coordinate of the place: ");
+                                int yEdit = scanner3.nextInt();
+                                String[] services = new String[0];
+                                System.out.println("Choose some of services in the below types:");
+                                for (String service : serviceTypes) {
+                                    System.out.printf("%s\n", service);
+                                };
+                                System.out.println("Types of service (Press q to quit adding new service):");
+                                scanner3.nextLine(); // to consume the new line
+                                // create a list of services
+                                while (true) {
+                                    String serviceInput = scanner3.nextLine();// to quit the loop
+                                    if (serviceInput.equals("q")) {
+                                        break;
+                                    }
+                                    // add a new service to list
+                                    services = addService(serviceInput, services);
+                                };
+                                editPlace(xEdit, yEdit, services, array_x);
+                            } else if (choice == 3) {
+                                System.out.println("The x-coordinate of the place: ");
+                                int xAdd = scanner3.nextInt();
+                                System.out.println("The y-coordinate of the place: ");
+                                int yAdd = scanner3.nextInt();
+                                String[] services = new String[0];
+                                System.out.println("Choose some of services in the below types:");
+                                for (String service : serviceTypes) {
+                                    System.out.printf("%s\n", service);
+                                }
+                                System.out.println("Types of service (Press q to quit adding new service):");
+                                scanner3.nextLine(); // to consume the new line
+                                while (true) {
+                                    String serviceInput = scanner3.nextLine();// to quit the loop
+                                    if (serviceInput.equals("q")) {
+                                        break;
+                                    }
+                                    // create a new list of services
+                                    services = addService(serviceInput, services);
+                                };
+                                array_x = addPlace(xAdd, yAdd, services, array_x);
+                            } else if (choice == 4) {
+                                break;
+                            } 
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Please enter again. Error log: " + e.getMessage());
                     }
                     break;
                 }
