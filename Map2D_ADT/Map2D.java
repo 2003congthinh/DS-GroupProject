@@ -1,5 +1,6 @@
 package Map2D_ADT;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -589,26 +590,54 @@ public class Map2D {
                                 };
                                 editPlace(xEdit, yEdit, services, array_x);
                             } else if (choice == 3) {
-                                System.out.println("The x-coordinate of the place: ");
-                                int xAdd = scanner3.nextInt();
-                                System.out.println("The y-coordinate of the place: ");
-                                int yAdd = scanner3.nextInt();
+                                int xAdd, yAdd;
                                 String[] services = new String[0];
+
+                                // Input validation for x-coordinate
+                                while (true) {
+                                    System.out.println("The x-coordinate of the place: ");
+                                    xAdd = scanner3.nextInt();
+
+                                    if (xAdd > 10000000) {
+                                        System.out.println("Error: The x-coordinate cannot exceed 10,000,000. Please enter a valid value.");
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                // Input validation for y-coordinate
+                                while (true) {
+                                    System.out.println("The y-coordinate of the place: ");
+                                    yAdd = scanner3.nextInt();
+                                    if (yAdd > 10000000) {
+                                        System.out.println("Error: The x-coordinate cannot exceed 10,000,000. Please enter a valid value.");
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                // Input validation for services
                                 System.out.println("Choose some of services in the below types:");
                                 for (String service : serviceTypes) {
                                     System.out.printf("%s\n", service);
                                 }
                                 System.out.println("Types of service (Press q to quit adding new service):");
-                                scanner3.nextLine(); // to consume the new line
+
+                                scanner3.nextLine(); // Consume the newline character after nextInt()
+
                                 while (true) {
-                                    String serviceInput = scanner3.nextLine();// to quit the loop
+                                    String serviceInput = scanner3.nextLine();
                                     if (serviceInput.equals("q")) {
                                         break;
+                                    } else if (!Arrays.asList(serviceTypes).contains(serviceInput)) {
+                                        System.out.println("Invalid service type. Please choose from the available types.");
+                                    } else {
+                                        // Add the service only if it's valid
+                                        services = addService(serviceInput, services);
                                     }
-                                    // create a new list of services
-                                    services = addService(serviceInput, services);
-                                };
+                                }
+
+                                // Now you have validated xAdd, yAdd, and services. Proceed with your logic.
                                 array_x = addPlace(xAdd, yAdd, services, array_x);
+
                             } else if (choice == 4) {
                                 break;
                             } 
